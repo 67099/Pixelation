@@ -1,0 +1,96 @@
+:root {
+    --primary-bg: #4aa9fc; 
+    --secondary-bg: #ffffff; 
+    --primary-text: #1a1a1a; 
+    --accent-blue: #00bcd4; 
+    --accent-yellow: #ffeb3b; 
+    --border-thick: 4px solid #1a1a1a;
+    --shadow-cartoon: 5px 5px 0px rgba(0, 0, 0, 0.7);
+}
+
+body {
+    background-color: var(--primary-bg); 
+    font-family: 'Arial', sans-serif;
+    color: var(--primary-text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+
+main .card { 
+    background-color: var(--secondary-bg) !important;
+    border: var(--border-thick) !important;
+    border-radius: 12px;
+    box-shadow: var(--shadow-cartoon) !important; 
+    transition: all 0.1s;
+}
+
+
+.btn.btn-success {
+    background-color: var(--accent-blue) !important; 
+    border: 3px solid var(--primary-text) !important; 
+    box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7) !important;
+    font-weight: bold;
+    color: white; 
+}
+
+.btn.btn-success:active {
+    box-shadow: none !important;
+    transform: translate(2px, 2px);
+}
+
+.btn.btn-warning {
+    background-color: var(--accent-yellow) !important;
+    border: 3px solid var(--primary-text) !important; 
+    box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7) !important;
+    font-weight: bold;
+}
+.btn.btn-warning:active {
+    box-shadow: none !important;
+    transform: translate(2px, 2px);
+}
+
+.image-frame {
+    border: 8px solid var(--accent-yellow); 
+    padding: 10px;
+    border-radius: 20px;
+    background-color: #333; 
+    margin-bottom: 20px;
+}
+
+
+#scoreboard-area .card-header {
+    background-color: var(--accent-yellow) !important;
+    color: var(--primary-text);
+    font-weight: bold;
+    border-bottom: var(--border-thick);
+}
+
+/* تنسيق الدردشة */
+#chat-area .card-header {
+    background-color: var(--accent-blue) !important;
+    border-bottom: var(--border-thick);
+    color: white;
+    font-weight: bold;
+}
+
+/* رسالة الفائز في الدردشة */
+#chat-messages .p-2 {
+    background-color: var(--accent-yellow) !important;
+    color: var(--primary-text);
+    border: 2px solid var(--primary-text);
+}
+
+/* قائمة اللاعبين */
+.list-group-item {
+    background-color: var(--secondary-bg) !important; 
+    border-color: #e0e0e0 !important;
+}
+
+main {
+    flex-grow: 1;
+}
+
+/* 🚨 تم إزالة جميع تنسيقات Modal و close-btn */
