@@ -22,10 +22,10 @@ let currentGameState = {
     ]
 };
 
-// الدوال المساعدة (تم نقلها للأعلى لتجنب ReferenceError)
+
 
 function calculateScore(pixelLevel) {
-    // 10 + (30 * 5) = 160 نقطة في البداية
+
     return 10 + (pixelLevel * 5); 
 }
 
@@ -51,7 +51,7 @@ function startNewChallenge(io, roomId) {
     }, 5000); 
 }
 
-// دالة لتنظيف حالة اللعبة من المراجع الدائرية (لحل RangeError)
+
 const getCleanGameState = () => {
     return {
         answer: currentGameState.answer,
@@ -95,10 +95,10 @@ module.exports = (io) => {
                 };
             }
             
-            // 🚨 استخدام الكائن النظيف عند الانضمام
+            
             io.to(roomId).emit('updateGameState', getCleanGameState());
 
-            // 🚨🚨 إضافة رسالة التعليمات هنا 🚨🚨
+            
             const instructions = `🏆 كيف ألعب؟: ستعرض صورة مبكسلة، خمنها! النقاط تعتمد على سرعتك في تخمين الصوره البداية 160 نقطة.
             سيقل التغبيش تلقائيا مع الوقت اضغط زر التلميح لتسريع فك التغبيش عند الحاجة !
  كل ما قل التغبيش قلت النقاط الكتسبة! 🍀`;
@@ -107,14 +107,14 @@ module.exports = (io) => {
                 username: "النظام", 
                 text: instructions 
             });
-            // 🚨 نهاية إضافة رسالة التعليمات
+            
             
             if (Object.keys(currentGameState.players).length === 1) {
                 startNewChallenge(io, roomId);
             }
         });
 
-        // **منطق زر HINT**
+   
         socket.on('requestHint', (roomId) => {
             if (currentGameState.currentPixelLevel > 2) {
                 currentGameState.currentPixelLevel = Math.max(2, currentGameState.currentPixelLevel - 3); 
@@ -137,7 +137,7 @@ module.exports = (io) => {
                     answer: currentGameState.answer 
                 });
                 
-                // استخدام الكائن النظيف عند تحديث النقاط (لحل RangeError)
+           
                 io.to(roomId).emit('updateGameState', getCleanGameState()); 
 
                 clearInterval(currentGameState.challengeTimer);
@@ -152,7 +152,7 @@ module.exports = (io) => {
 
         socket.on('disconnect', () => {
             delete currentGameState.players[socket.id];
-            // استخدام الكائن النظيف عند قطع الاتصال (لحل RangeError)
+       
             io.emit('updateGameState', getCleanGameState());
             console.log(`✗ ${socket.username} disconnected`);
         });
