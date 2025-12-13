@@ -6,7 +6,7 @@ class AuthenticatorView {
         this.submitHandler = submitCallback;
         this.isLoginMode = true; 
         
-        // **الجلب (Querying) يجب أن يتم أولاً**
+   
         this.form = this.container.querySelector('#auth-form');
         this.title = this.container.querySelector('#auth-title');
         this.submitButton = this.container.querySelector('#auth-submit'); 
@@ -14,12 +14,11 @@ class AuthenticatorView {
         this.usernameInput = this.container.querySelector('#username');
         this.passwordInput = this.container.querySelector('#password');
         
-        this.setupEventListeners(); // يتم استدعاؤه بعد الجلب
-        this.render(); // يتم استدعاؤه لملء النصوص
+        this.setupEventListeners(); 
+        this.render(); 
     }
 
     setupEventListeners() {
-        // التأكد من أن العناصر غير فارغة قبل إضافة المستمعين
         if (this.form && this.toggleLink) {
             this.form.addEventListener('submit', this.handleSubmit.bind(this));
             this.toggleLink.addEventListener('click', this.toggleMode.bind(this));
