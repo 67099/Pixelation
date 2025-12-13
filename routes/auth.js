@@ -4,23 +4,23 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
 
-// **ملاحظة: هذا كود وهمي (MOCK) للتوثيق لضمان عمل الواجهة الأمامية فوراً**
+
 const MOCK_USER_ID = 'test_user_id'; 
-const MOCK_USERNAME = 'admin'; // يمكن استخدام هذا الاسم للاختبار
-const JWT_SECRET = 'your_super_secret_key'; // يجب أن يطابق ما في ملفاتك الأخرى
+const MOCK_USERNAME = 'admin'; 
+const JWT_SECRET = 'your_super_secret_key'; 
 
 // ------------------------------------
 // 1. مسار تسجيل الدخول (POST /api/auth/login)
 router.post('/login', async (req, res) => {
     const { username, password } = req.body;
 
-    // **التحقق الوهمي:** إذا كان أي مستخدم يحاول الدخول
+    // 
     if (username && password) { 
         
-        // إنشاء رمز JWT بصلاحية 24 ساعة
+        // 
         const token = jwt.sign({ userId: MOCK_USER_ID, username: username }, JWT_SECRET, { expiresIn: '24h' });
         
-        // الرد بنجاح (الذي يتوقعه الـ Frontend)
+        //
         return res.json({ 
             msg: 'Login successful (MOCK)', 
             token: token, 
@@ -29,7 +29,7 @@ router.post('/login', async (req, res) => {
         });
     }
 
-    // إذا فشل التحقق
+    // 
     return res.status(401).json({ msg: 'Invalid credentials' });
 });
 
