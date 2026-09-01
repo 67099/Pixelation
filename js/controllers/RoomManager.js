@@ -13,9 +13,9 @@ class RoomManager {
         this.token = token;
     }
 
-    async authenticate(mode, username, password) {
+    async authenticate(mode, username, password, retriesLeft = 2) {
         const endpoint = mode === 'login' ? '/login' : '/register';
-        
+
         try {
             const response = await fetch(this.apiBaseUrl + endpoint, {
                 method: 'POST',
@@ -25,16 +25,25 @@ class RoomManager {
                 body: JSON.stringify({ username, password })
             });
 
-            const data = await response.json();
+            let data;
+            try {
+                data = await response.json();
+            } catch (parseError) {
+                // free-tier host can briefly 404 non-JSON while waking from idle; retry before giving up
+                if (retriesLeft > 0) {
+                    await new Promise(resolve => setTimeout(resolve, 3000));
+                    return this.authenticate(mode, username, password, retriesLeft - 1);
+                }
+                throw new Error('الخادم غير متاح مؤقتًا، حاول مرة أخرى خلال دقيقة');
+            }
 
             if (!response.ok) {
-                // الخطأ الذي كان يظهر (Unexpected token '<') كان هنا قبل تصحيح server.js
                 throw new Error(data.msg || 'Authentication failed');
             }
 
             this.token = data.token;
             localStorage.setItem('jwtToken', this.token);
-            
+
             return data;
         } catch (error) {
             console.error('Auth Error:', error.message);
