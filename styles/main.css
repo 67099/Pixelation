@@ -99,6 +99,25 @@ main {
     box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.6);
 }
 
+.site-footer {
+    text-align: center;
+    padding: 1.5rem 1rem 2rem;
+    font-family: 'VT323', monospace;
+    font-size: 1.05rem;
+    color: var(--ink-dim);
+    position: relative;
+    z-index: 1;
+}
+
+.site-footer a {
+    color: var(--neon-cyan);
+    text-decoration: none;
+}
+
+.site-footer a:hover {
+    text-decoration: underline;
+}
+
 /* ---------- auth screen ---------- */
 
 #auth-section {
