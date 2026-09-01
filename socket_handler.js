@@ -1,15 +1,13 @@
-// في ملف socket_handler.js
-
 const jwt = require('jsonwebtoken');
-const JWT_SECRET = 'your_super_secret_key'; 
+const JWT_SECRET = process.env.JWT_SECRET;
 
 let currentGameState = {
-    answer: 'MONA LISA', 
-    currentPixelLevel: 30, // مستوى التغبيش الأولي
-    players: {}, 
+    answer: 'MONA LISA',
+    currentPixelLevel: 30,
+    players: {},
     challengeTimer: null,
-    
-    // الإجابات الإنجليزية فقط (للتوافق مع المنطق الحالي)
+
+    // answers must stay English — guess matching does an uppercase compare
     challenges: [
         { answer: 'MONA LISA', image: 'mona_lisa.jpg' }, 
         { answer: 'PEPSI', image: 'pepsi.jpg' },

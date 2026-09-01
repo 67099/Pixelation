@@ -1,56 +1,64 @@
-// في ملف routes/auth.js
-
 const express = require('express');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const User = require('../models/User');
+
 const router = express.Router();
 
+function signToken(user) {
+  return jwt.sign({ userId: user._id.toString(), username: user.username }, process.env.JWT_SECRET, { expiresIn: '24h' });
+}
 
-const MOCK_USER_ID = 'test_user_id'; 
-const MOCK_USERNAME = 'admin'; 
-const JWT_SECRET = 'your_super_secret_key'; 
+router.post('/register', async (req, res) => {
+  const { username, password } = req.body;
+  if (!username || !password) {
+    return res.status(400).json({ msg: 'Please enter all fields' });
+  }
+  if (password.length < 8) {
+    return res.status(400).json({ msg: 'Password must be at least 8 characters' });
+  }
 
-// ------------------------------------
-// 1. مسار تسجيل الدخول (POST /api/auth/login)
-router.post('/login', async (req, res) => {
-    const { username, password } = req.body;
+  try {
+    const passwordHash = await bcrypt.hash(password, 10);
+    const user = await User.create({ username, passwordHash });
+    const token = signToken(user);
 
-    // 
-    if (username && password) { 
-        
-        // 
-        const token = jwt.sign({ userId: MOCK_USER_ID, username: username }, JWT_SECRET, { expiresIn: '24h' });
-        
-        //
-        return res.json({ 
-            msg: 'Login successful (MOCK)', 
-            token: token, 
-            userId: MOCK_USER_ID,
-            username: username
-        });
+    return res.status(201).json({
+      msg: 'Registration successful',
+      token,
+      userId: user._id,
+      username: user.username,
+    });
+  } catch (err) {
+    if (err.code === 11000) {
+      return res.status(409).json({ msg: 'Username already taken' });
     }
-
-    // 
-    return res.status(401).json({ msg: 'Invalid credentials' });
+    return res.status(500).json({ msg: 'Something went wrong, try again' });
+  }
 });
 
-// ------------------------------------
-// 2. مسار التسجيل (POST /api/auth/register)
-router.post('/register', async (req, res) => {
-    const { username, password } = req.body;
-    
-    if (!username || !password) {
-        return res.status(400).json({ msg: 'Please enter all fields' });
+router.post('/login', async (req, res) => {
+  const { username, password } = req.body;
+  if (!username || !password) {
+    return res.status(400).json({ msg: 'Please enter all fields' });
+  }
+
+  try {
+    const user = await User.findOne({ username });
+    if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
+      return res.status(401).json({ msg: 'Invalid credentials' });
     }
-    
-    // محاكاة تسجيل ناجح بصلاحية 24 ساعة
-    const token = jwt.sign({ userId: 'new_temp_id', username: username }, JWT_SECRET, { expiresIn: '24h' });
-    
-    return res.json({ 
-        msg: 'Registration successful (MOCK)', 
-        token: token, 
-        userId: 'new_temp_id',
-        username: username
+
+    const token = signToken(user);
+    return res.json({
+      msg: 'Login successful',
+      token,
+      userId: user._id,
+      username: user.username,
     });
+  } catch (err) {
+    return res.status(500).json({ msg: 'Something went wrong, try again' });
+  }
 });
 
 module.exports = router;

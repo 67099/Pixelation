@@ -1,21 +1,21 @@
 
 
+require('dotenv').config();
+
 const express = require('express');
 const http = require('http');
 const socketio = require('socket.io');
 const path = require('path');
+const connectDB = require('./config/db');
 
+connectDB();
 
 const app = express();
-const server = http.createServer(app); 
-const io = socketio(server); 
+const server = http.createServer(app);
+const io = socketio(server);
 
-// ------------------------------------------------
-
-app.use(express.json()); 
-app.use('/api/auth', require('./routes/auth')); 
-// ------------------------------------------------
-
+app.use(express.json());
+app.use('/api/auth', require('./routes/auth'));
 
 app.use('/styles', express.static(path.join(__dirname, 'styles')));
 app.use('/js', express.static(path.join(__dirname, 'js')));
