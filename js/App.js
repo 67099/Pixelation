@@ -138,7 +138,8 @@ class App {
                     confetti({
                         particleCount: 150,
                         spread: 90,
-                        origin: { x: 0.5, y: 0.6 }
+                        origin: { x: 0.5, y: 0.6 },
+                        colors: ['#ff2e63', '#08f7fe', '#f9ed69', '#39ff88']
                     });
                 }
             }
