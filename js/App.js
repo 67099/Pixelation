@@ -122,8 +122,7 @@ class App {
             }
         } else if (type === 'newChallenge') {
             if (this.imageRenderer) {
-                this.imageRenderer.loadNewImage(`/images/${payload.image}`);
-                this.imageRenderer.render(payload.pixelLevel); 
+                this.imageRenderer.loadNewImage(`/images/${payload.image}`, payload.pixelLevel);
             }
         } else if (type === 'updatePixelLevel') {
             if (this.imageRenderer) {
@@ -132,7 +131,7 @@ class App {
         } else if (type === 'correctGuess') {
             if (this.imageRenderer && this.gameRoomView) {
                 this.imageRenderer.render(1); 
-                this.gameRoomView.addChatMessage(payload.winner, `✅ الإجابة هي: ${payload.answer} (فائز!)`, true);
+                this.gameRoomView.addChatMessage(payload.winner, `خمّن الإجابة الصحيحة: ${payload.answer}`, true);
                 
                 if (typeof confetti !== 'undefined') {
                     confetti({

@@ -4,22 +4,24 @@ class ImageRenderer {
         this.ctx = this.canvas.getContext('2d');
         this.img = new Image();
         this.imageLoaded = false;
-        
+        this.pendingBlockSize = 30;
+
         this.img.onload = () => {
             this.imageLoaded = true;
-            this.render();
+            this.render(this.pendingBlockSize);
         };
-        
-        this.ctx.fillStyle = '#000000'; 
+
+        this.ctx.fillStyle = '#000000';
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
-    loadNewImage(url) {
+    loadNewImage(url, blockSize = 30) {
         this.imageLoaded = false;
+        this.pendingBlockSize = blockSize;
         this.img.src = url;
     }
 
-    render(blockSize = 30) {
+    render(blockSize = this.pendingBlockSize) {
         if (!this.imageLoaded) return;
         
         const width = this.canvas.width;

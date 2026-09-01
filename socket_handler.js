@@ -3,6 +3,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 let currentGameState = {
     answer: 'MONA LISA',
+    currentImage: null,
     currentPixelLevel: 30,
     players: {},
     challengeTimer: null,
@@ -30,14 +31,18 @@ function calculateScore(pixelLevel) {
 function startNewChallenge(io, roomId) {
     const newChallenge = currentGameState.challenges[Math.floor(Math.random() * currentGameState.challenges.length)];
 
-    currentGameState.answer = newChallenge.answer; 
-    currentGameState.currentPixelLevel = 30; 
-    
-    io.to(roomId).emit('newChallenge', { 
-        image: newChallenge.image, 
-        pixelLevel: currentGameState.currentPixelLevel 
+    currentGameState.answer = newChallenge.answer;
+    currentGameState.currentImage = newChallenge.image;
+    currentGameState.currentPixelLevel = 30;
+
+    io.to(roomId).emit('newChallenge', {
+        image: newChallenge.image,
+        pixelLevel: currentGameState.currentPixelLevel
     });
 
+    if (currentGameState.challengeTimer) {
+        clearInterval(currentGameState.challengeTimer);
+    }
     currentGameState.challengeTimer = setInterval(() => {
         if (currentGameState.currentPixelLevel > 2) {
             currentGameState.currentPixelLevel -= 4; 
@@ -96,18 +101,22 @@ module.exports = (io) => {
             
             io.to(roomId).emit('updateGameState', getCleanGameState());
 
-            
             const instructions = `كيف ألعب؟: ستعرض صورة مبكسلة، خمنها! النقاط تعتمد على سرعتك في تخمين الصوره البداية 160 نقطة.
             سيقل التغبيش تلقائيا مع الوقت اضغط زر التلميح لتسريع فك التغبيش عند الحاجة !
  كل ما قل التغبيش قلت النقاط الكتسبة!`;
 
-            io.to(roomId).emit('guessMessage', { 
-                username: "النظام", 
-                text: instructions 
+            socket.emit('guessMessage', {
+                username: "النظام",
+                text: instructions
             });
-            
-            
-            if (Object.keys(currentGameState.players).length === 1) {
+
+            if (currentGameState.currentImage) {
+                // a challenge is already running — catch this player up instead of leaving their canvas blank
+                socket.emit('newChallenge', {
+                    image: currentGameState.currentImage,
+                    pixelLevel: currentGameState.currentPixelLevel
+                });
+            } else {
                 startNewChallenge(io, roomId);
             }
         });

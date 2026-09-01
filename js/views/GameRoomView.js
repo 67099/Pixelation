@@ -88,7 +88,7 @@ renderGameLayout() {
             who.textContent = username;
             msgElement.appendChild(who);
             msgElement.appendChild(document.createElement('br'));
-            msgElement.appendChild(document.createTextNode(`صح عليك!: ${text}`));
+            msgElement.appendChild(document.createTextNode(text));
         } else {
             msgElement.className = 'chat-msg';
             const who = document.createElement('span');
