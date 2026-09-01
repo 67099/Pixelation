@@ -38,7 +38,7 @@ renderGameLayout() {
                     <div id="chat-messages"></div>
 
                     <form id="guess-form" class="guess-bar">
-                        <input type="text" id="guess-input" class="pixel-input" placeholder="...بالانقليزي اكتب تخمينك هنا" required>
+                        <input type="text" id="guess-input" class="pixel-input" placeholder="بالانقليزي اكتب تخمينك هنا" required>
                         <button class="pixel-btn pixel-btn-alt" type="submit" id="send-guess-btn">إرسال</button>
                     </form>
                 </div>
