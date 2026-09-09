@@ -1,9 +1,10 @@
 // في ملف js/views/GameRoomView.js
 
 class GameRoomView {
-    constructor(containerElement, guessSubmitCallback) {
+    constructor(containerElement, guessSubmitCallback, logoutCallback) {
         this.container = containerElement;
         this.guessSubmitHandler = guessSubmitCallback;
+        this.logoutHandler = logoutCallback;
 
         this.renderGameLayout();
 
@@ -11,12 +12,19 @@ class GameRoomView {
         this.chatMessages = this.container.querySelector('#chat-messages');
         this.progressFill = this.container.querySelector('#pixel-progress-fill');
         this.progressLabel = this.container.querySelector('#pixel-progress-label');
+        this.logoutButton = this.container.querySelector('#logout-btn');
+        this.usernameLabel = this.container.querySelector('#current-username');
 
         this.setupEventListeners();
     }
 
 renderGameLayout() {
         this.container.innerHTML = `
+            <div class="game-topbar">
+                <span id="current-username"></span>
+                <button id="logout-btn" class="pixel-btn pixel-btn-ghost">تسجيل الخروج</button>
+            </div>
+
             <div class="game-layout">
 
                 <div class="game-main">
@@ -55,6 +63,17 @@ renderGameLayout() {
     setupEventListeners() {
         const form = this.container.querySelector('#guess-form');
         form.addEventListener('submit', this.handleSubmit.bind(this));
+
+        if (this.logoutButton) {
+            this.logoutButton.addEventListener('click', () => {
+                if (this.logoutHandler) this.logoutHandler();
+            });
+        }
+    }
+
+    setSession(username, isGuest) {
+        if (this.usernameLabel) this.usernameLabel.textContent = username || '';
+        if (this.logoutButton) this.logoutButton.textContent = isGuest ? 'رجوع' : 'تسجيل الخروج';
     }
 
     handleSubmit(event) {

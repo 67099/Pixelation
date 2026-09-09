@@ -64,7 +64,7 @@ router.post('/login', async (req, res) => {
 
 router.post('/guest', (req, res) => {
   const guestId = new mongoose.Types.ObjectId();
-  const guestUsername = `Guest${Math.floor(1000 + Math.random() * 9000)}`;
+  const guestUsername = `Guest${Math.floor(100000 + Math.random() * 900000)}`;
   const token = signToken({ _id: guestId, username: guestUsername });
 
   return res.json({

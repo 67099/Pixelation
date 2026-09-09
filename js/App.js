@@ -1,12 +1,14 @@
-
+// pixelLevel starts at 30 and never drops below 2, see socket_handler.js
+const MAX_PIXEL_LEVEL = 30;
+const MIN_PIXEL_LEVEL = 2;
 
 class App {
     constructor() {
         this.token = localStorage.getItem('jwtToken');
         this.username = localStorage.getItem('username');
+        this.isGuest = localStorage.getItem('isGuest') === 'true';
         this.imageRenderer = null;
         this.gameRoomView = null;
-        this.currentMaxPixelLevel = 30;
 
         const serverUrl = window.location.protocol + '//' + window.location.host;
         
@@ -36,12 +38,14 @@ class App {
         gameContainer.style.display = 'block';
 
         if (!this.gameRoomView) {
-        
+
             this.gameRoomView = new GameRoomView(
                 gameContainer,
-                this.handleGuessSubmission.bind(this)
+                this.handleGuessSubmission.bind(this),
+                this.handleLogout.bind(this)
             );
         }
+        this.gameRoomView.setSession(this.username, this.isGuest);
         
         if (!this.imageRenderer) {
             this.imageRenderer = new ImageRenderer('game-canvas'); 
@@ -90,13 +94,37 @@ class App {
             localStorage.setItem('username', data.username);
             localStorage.setItem('jwtToken', data.token);
             localStorage.setItem('userId', data.userId);
+            localStorage.setItem('isGuest', 'true');
 
+            this.username = data.username;
+            this.isGuest = true;
             this.roomManager.setToken(data.token);
             this.initGameView();
         } catch (error) {
             alert(error.message);
             console.error(error);
         }
+    }
+
+    handleLogout() {
+        localStorage.removeItem('jwtToken');
+        localStorage.removeItem('username');
+        localStorage.removeItem('userId');
+        localStorage.removeItem('isGuest');
+
+        if (this.roomManager.socket) {
+            this.roomManager.socket.disconnect();
+            this.roomManager.socket = null;
+        }
+        this.roomManager.token = null;
+
+        this.username = null;
+        this.isGuest = false;
+        this.gameRoomView = null;
+        this.imageRenderer = null;
+        document.getElementById('game-room-section').innerHTML = '';
+
+        this.initAuthView();
     }
 
     handleGuessSubmission(guessText) {
@@ -113,13 +141,16 @@ class App {
 
         try {
             const data = await this.roomManager.authenticate(mode, username, password);
-            
-            localStorage.setItem('username', data.username || username);
-            localStorage.setItem('jwtToken', data.token); 
-            localStorage.setItem('userId', data.userId);
 
+            localStorage.setItem('username', data.username || username);
+            localStorage.setItem('jwtToken', data.token);
+            localStorage.setItem('userId', data.userId);
+            localStorage.setItem('isGuest', 'false');
+
+            this.username = data.username || username;
+            this.isGuest = false;
             this.roomManager.setToken(data.token);
-            this.initGameView(); 
+            this.initGameView();
 
         } catch (error) {
             alert(error.message);
@@ -133,24 +164,23 @@ class App {
                 this.gameRoomView.updateScoreboard(payload.players);
             }
         } else if (type === 'newChallenge') {
-            this.currentMaxPixelLevel = payload.pixelLevel;
             if (this.imageRenderer) {
                 this.imageRenderer.loadNewImage(`/images/${payload.image}`, payload.pixelLevel);
             }
             if (this.gameRoomView) {
-                this.gameRoomView.updatePixelProgress(payload.pixelLevel, this.currentMaxPixelLevel);
+                this.gameRoomView.updatePixelProgress(payload.pixelLevel, MAX_PIXEL_LEVEL, MIN_PIXEL_LEVEL);
             }
         } else if (type === 'updatePixelLevel') {
             if (this.imageRenderer) {
                 this.imageRenderer.render(payload);
             }
             if (this.gameRoomView) {
-                this.gameRoomView.updatePixelProgress(payload, this.currentMaxPixelLevel);
+                this.gameRoomView.updatePixelProgress(payload, MAX_PIXEL_LEVEL, MIN_PIXEL_LEVEL);
             }
         } else if (type === 'correctGuess') {
             if (this.imageRenderer && this.gameRoomView) {
                 this.imageRenderer.render(1);
-                this.gameRoomView.updatePixelProgress(1, this.currentMaxPixelLevel);
+                this.gameRoomView.updatePixelProgress(MIN_PIXEL_LEVEL, MAX_PIXEL_LEVEL, MIN_PIXEL_LEVEL);
                 this.gameRoomView.addChatMessage(payload.winner, `خمّن الإجابة الصحيحة: ${payload.answer}`, true);
                 
                 if (typeof confetti !== 'undefined') {
