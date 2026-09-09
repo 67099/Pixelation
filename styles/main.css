@@ -1,15 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Tajawal:wght@500;700;900&family=VT323&display=swap');
 
 :root {
-    --bg-void: #0b0c1a;
-    --bg-panel: #14162b;
-    --bg-panel-raised: #1c1f3d;
+    --bg-void: #0a1428;
+    --bg-panel: #101d38;
+    --bg-panel-raised: #16264a;
     --neon-pink: #ff2e63;
-    --neon-cyan: #08f7fe;
+    --neon-cyan: #4fc3f7;
     --neon-gold: #f9ed69;
     --neon-green: #39ff88;
     --ink: #eef0ff;
-    --ink-dim: #8b8fb8;
+    --ink-dim: #8b93b8;
     --pixel-corner: 10px;
 }
 
@@ -20,8 +20,6 @@
 body {
     background: var(--bg-void);
     background-image:
-        radial-gradient(circle at 15% 20%, rgba(255, 46, 99, 0.12), transparent 40%),
-        radial-gradient(circle at 85% 80%, rgba(8, 247, 254, 0.12), transparent 40%),
         repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.025) 0px, rgba(255, 255, 255, 0.025) 1px, transparent 1px, transparent 3px);
     font-family: 'Tajawal', sans-serif;
     color: var(--ink);
@@ -55,48 +53,29 @@ main {
     font-size: clamp(1.1rem, 4vw, 2rem);
     letter-spacing: 2px;
     color: var(--neon-cyan);
-    text-shadow:
-        0 0 6px var(--neon-cyan),
-        0 0 18px rgba(8, 247, 254, 0.6),
-        3px 3px 0 var(--neon-pink);
     margin: 0;
-    animation: flicker 4s infinite;
 }
 
 .site-header .logo img {
     width: 40px;
     height: 40px;
     image-rendering: pixelated;
-    filter: drop-shadow(0 0 6px var(--neon-cyan));
 }
 
 .site-header .tagline {
-    font-family: 'VT323', monospace;
+    font-family: 'Tajawal', sans-serif;
     color: var(--ink-dim);
-    font-size: 1.1rem;
-    letter-spacing: 1px;
+    font-size: 1rem;
     margin-top: 0.5rem;
-}
-
-@keyframes flicker {
-    0%, 96%, 100% { opacity: 1; }
-    97% { opacity: 0.82; }
-    98% { opacity: 1; }
-    99% { opacity: 0.9; }
 }
 
 /* ---------- pixel panel (shared chunky retro card) ---------- */
 
 .pixel-panel {
     background: var(--bg-panel);
-    border: 3px solid var(--ink);
-    clip-path: polygon(
-        0 var(--pixel-corner), var(--pixel-corner) var(--pixel-corner), var(--pixel-corner) 0,
-        calc(100% - var(--pixel-corner)) 0, calc(100% - var(--pixel-corner)) var(--pixel-corner), 100% var(--pixel-corner),
-        100% calc(100% - var(--pixel-corner)), calc(100% - var(--pixel-corner)) calc(100% - var(--pixel-corner)), calc(100% - var(--pixel-corner)) 100%,
-        var(--pixel-corner) 100%, var(--pixel-corner) calc(100% - var(--pixel-corner)), 0 calc(100% - var(--pixel-corner))
-    );
-    box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.6);
+    border: 1px solid var(--bg-panel-raised);
+    border-radius: 10px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
 }
 
 .site-footer {
@@ -133,8 +112,7 @@ main {
     font-size: 1.4rem;
     line-height: 1.5;
     text-align: center;
-    color: var(--neon-gold);
-    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+    color: var(--ink);
     margin-bottom: 1.75rem;
 }
 
@@ -173,23 +151,22 @@ main {
     width: 100%;
     background: var(--neon-cyan);
     color: var(--bg-void);
-    border: 3px solid var(--ink);
+    border: none;
+    border-radius: 6px;
     padding: 0.75rem 1rem;
     font-family: 'Tajawal', sans-serif;
-    font-weight: 900;
+    font-weight: 700;
     font-size: 1.05rem;
     cursor: pointer;
-    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.6);
-    transition: transform 0.08s, box-shadow 0.08s, background 0.15s;
+    transition: background 0.15s;
 }
 
 .pixel-btn:hover {
-    background: var(--neon-gold);
+    background: #7cd3fb;
 }
 
 .pixel-btn:active {
-    transform: translate(4px, 4px);
-    box-shadow: none;
+    background: #3aa9dd;
 }
 
 .pixel-btn.pixel-btn-alt {
