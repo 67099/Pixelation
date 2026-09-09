@@ -1,4 +1,4 @@
-<img src="images/icon.png" alt="Pixel Hunt icon" width="120">
+<img src="images/icon.png" alt="Pixelation icon" width="120">
 
 # Pixelation
 

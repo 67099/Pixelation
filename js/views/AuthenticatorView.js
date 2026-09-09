@@ -56,7 +56,7 @@ class AuthenticatorView {
         // **التأكد من وجود العناصر قبل تعيين النص**
         if (this.title && this.toggleLink && this.submitButton) {
             if (this.isLoginMode) {
-                this.title.textContent = 'تسجيل الدخول إلى Pixel Hunt';
+                this.title.textContent = 'تسجيل الدخول إلى Pixelation';
                 this.toggleLink.textContent = 'ليس لديك حساب؟ سوّ حسابك الحين';
                 this.submitButton.textContent = 'دخول'; 
             } else {
