@@ -51,6 +51,20 @@ class RoomManager {
         }
     }
 
+    async authenticateGuest() {
+        const response = await fetch(this.apiBaseUrl + '/guest', { method: 'POST' });
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.msg || 'Could not start a guest session');
+        }
+
+        this.token = data.token;
+        localStorage.setItem('jwtToken', this.token);
+
+        return data;
+    }
+
     connectSocket() {
         if (!this.token) {
             console.error('Cannot connect Socket: Token is missing.');
@@ -106,13 +120,6 @@ class RoomManager {
     submitGuess(guessText) {
         if (this.socket && guessText) {
             this.socket.emit('submitGuess', { guessText });
-        }
-    }
-    
-    // دالة جديدة لإرسال طلب HINT إلى الخادم
-    requestHint(roomId = 'main-room') {
-        if (this.socket) {
-            this.socket.emit('requestHint', roomId);
         }
     }
 }

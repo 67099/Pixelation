@@ -1,6 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
 const User = require('../models/User');
 
 const router = express.Router();
@@ -59,6 +60,19 @@ router.post('/login', async (req, res) => {
   } catch (err) {
     return res.status(500).json({ msg: 'Something went wrong, try again' });
   }
+});
+
+router.post('/guest', (req, res) => {
+  const guestId = new mongoose.Types.ObjectId();
+  const guestUsername = `Guest${Math.floor(1000 + Math.random() * 9000)}`;
+  const token = signToken({ _id: guestId, username: guestUsername });
+
+  return res.json({
+    msg: 'Guest session started',
+    token,
+    userId: guestId,
+    username: guestUsername,
+  });
 });
 
 module.exports = router;

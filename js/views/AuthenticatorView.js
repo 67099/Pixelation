@@ -1,21 +1,22 @@
 // في ملف js/views/AuthenticatorView.js
 
 class AuthenticatorView {
-    constructor(containerElement, submitCallback) {
+    constructor(containerElement, submitCallback, guestCallback) {
         this.container = containerElement;
         this.submitHandler = submitCallback;
-        this.isLoginMode = true; 
-        
-   
+        this.guestHandler = guestCallback;
+        this.isLoginMode = true;
+
         this.form = this.container.querySelector('#auth-form');
         this.title = this.container.querySelector('#auth-title');
-        this.submitButton = this.container.querySelector('#auth-submit'); 
+        this.submitButton = this.container.querySelector('#auth-submit');
         this.toggleLink = this.container.querySelector('#toggle-auth-mode');
         this.usernameInput = this.container.querySelector('#username');
         this.passwordInput = this.container.querySelector('#password');
-        
-        this.setupEventListeners(); 
-        this.render(); 
+        this.guestButton = this.container.querySelector('#guest-btn');
+
+        this.setupEventListeners();
+        this.render();
     }
 
     setupEventListeners() {
@@ -24,6 +25,12 @@ class AuthenticatorView {
             this.toggleLink.addEventListener('click', this.toggleMode.bind(this));
         } else {
              console.error("Auth elements not found in DOM.");
+        }
+
+        if (this.guestButton) {
+            this.guestButton.addEventListener('click', () => {
+                if (this.guestHandler) this.guestHandler();
+            });
         }
     }
 
@@ -50,7 +57,7 @@ class AuthenticatorView {
         if (this.title && this.toggleLink && this.submitButton) {
             if (this.isLoginMode) {
                 this.title.textContent = 'تسجيل الدخول إلى Pixel Hunt';
-                this.toggleLink.textContent = 'ليس لديك حساب؟ اشترك الآن';
+                this.toggleLink.textContent = 'ليس لديك حساب؟ سوّ حسابك الحين';
                 this.submitButton.textContent = 'دخول'; 
             } else {
                 this.title.textContent = 'إنشاء حساب جديد';

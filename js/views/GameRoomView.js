@@ -1,17 +1,17 @@
 // في ملف js/views/GameRoomView.js
 
 class GameRoomView {
-    constructor(containerElement, guessSubmitCallback, hintRequestCallback) { 
+    constructor(containerElement, guessSubmitCallback) {
         this.container = containerElement;
         this.guessSubmitHandler = guessSubmitCallback;
-        this.hintRequestHandler = hintRequestCallback; 
 
-        this.renderGameLayout(); 
-        
+        this.renderGameLayout();
+
         this.playersList = this.container.querySelector('#players-list');
         this.chatMessages = this.container.querySelector('#chat-messages');
-        this.hintButton = this.container.querySelector('#hint-button'); 
-        
+        this.progressFill = this.container.querySelector('#pixel-progress-fill');
+        this.progressLabel = this.container.querySelector('#pixel-progress-label');
+
         this.setupEventListeners();
     }
 
@@ -24,7 +24,12 @@ renderGameLayout() {
                         <canvas id="game-canvas" width="600" height="400"></canvas>
                     </div>
 
-                    <button id="hint-button" class="pixel-btn">!اضغط لتقليل تشويش الصورة!</button>
+                    <div id="pixel-progress">
+                        <div id="pixel-progress-track">
+                            <div id="pixel-progress-fill"></div>
+                        </div>
+                        <span id="pixel-progress-label">وضوح الصورة: 0%</span>
+                    </div>
 
                     <div id="scoreboard-area" class="pixel-panel">
                         <div class="panel-header">لوحة المتصدرين</div>
@@ -50,10 +55,6 @@ renderGameLayout() {
     setupEventListeners() {
         const form = this.container.querySelector('#guess-form');
         form.addEventListener('submit', this.handleSubmit.bind(this));
-        
-        if (this.hintButton) {
-            this.hintButton.addEventListener('click', this.handleHint.bind(this));
-        }
     }
 
     handleSubmit(event) {
@@ -62,14 +63,17 @@ renderGameLayout() {
         const guessText = input.value.trim();
         if (guessText) {
             this.guessSubmitHandler(guessText);
-            input.value = ''; 
+            input.value = '';
         }
     }
-    
-    handleHint() {
-        if (this.hintRequestHandler) {
-            this.hintRequestHandler(); 
-        }
+
+    updatePixelProgress(pixelLevel, maxPixelLevel, minPixelLevel = 2) {
+        const range = Math.max(1, maxPixelLevel - minPixelLevel);
+        const clarity = Math.round(((maxPixelLevel - pixelLevel) / range) * 100);
+        const clamped = Math.min(100, Math.max(0, clarity));
+
+        if (this.progressFill) this.progressFill.style.width = `${clamped}%`;
+        if (this.progressLabel) this.progressLabel.textContent = `وضوح الصورة: ${clamped}%`;
     }
 
 // في ملف js/views/GameRoomView.js (دالة addChatMessage)

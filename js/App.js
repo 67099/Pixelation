@@ -4,8 +4,9 @@ class App {
     constructor() {
         this.token = localStorage.getItem('jwtToken');
         this.username = localStorage.getItem('username');
-        this.imageRenderer = null; 
+        this.imageRenderer = null;
         this.gameRoomView = null;
+        this.currentMaxPixelLevel = 30;
 
         const serverUrl = window.location.protocol + '//' + window.location.host;
         
@@ -26,7 +27,7 @@ class App {
     initAuthView() {
         document.getElementById('game-room-section').style.display = 'none';
         const authContainer = document.getElementById('auth-section');
-        this.authView = new AuthenticatorView(authContainer, this.handleAuth.bind(this));
+        this.authView = new AuthenticatorView(authContainer, this.handleAuth.bind(this), this.handleGuestLogin.bind(this));
     }
 
     initGameView() {
@@ -37,9 +38,8 @@ class App {
         if (!this.gameRoomView) {
         
             this.gameRoomView = new GameRoomView(
-                gameContainer, 
-                this.handleGuessSubmission.bind(this),
-                this.handleHintRequest.bind(this) 
+                gameContainer,
+                this.handleGuessSubmission.bind(this)
             );
         }
         
@@ -83,10 +83,22 @@ class App {
         }
     }
 
-    handleHintRequest() {
-        this.roomManager.requestHint();
+    async handleGuestLogin() {
+        try {
+            const data = await this.roomManager.authenticateGuest();
+
+            localStorage.setItem('username', data.username);
+            localStorage.setItem('jwtToken', data.token);
+            localStorage.setItem('userId', data.userId);
+
+            this.roomManager.setToken(data.token);
+            this.initGameView();
+        } catch (error) {
+            alert(error.message);
+            console.error(error);
+        }
     }
-    
+
     handleGuessSubmission(guessText) {
         if (this.roomManager.socket) {
             this.roomManager.submitGuess(guessText);
@@ -121,16 +133,24 @@ class App {
                 this.gameRoomView.updateScoreboard(payload.players);
             }
         } else if (type === 'newChallenge') {
+            this.currentMaxPixelLevel = payload.pixelLevel;
             if (this.imageRenderer) {
                 this.imageRenderer.loadNewImage(`/images/${payload.image}`, payload.pixelLevel);
             }
+            if (this.gameRoomView) {
+                this.gameRoomView.updatePixelProgress(payload.pixelLevel, this.currentMaxPixelLevel);
+            }
         } else if (type === 'updatePixelLevel') {
             if (this.imageRenderer) {
-                this.imageRenderer.render(payload); 
+                this.imageRenderer.render(payload);
+            }
+            if (this.gameRoomView) {
+                this.gameRoomView.updatePixelProgress(payload, this.currentMaxPixelLevel);
             }
         } else if (type === 'correctGuess') {
             if (this.imageRenderer && this.gameRoomView) {
-                this.imageRenderer.render(1); 
+                this.imageRenderer.render(1);
+                this.gameRoomView.updatePixelProgress(1, this.currentMaxPixelLevel);
                 this.gameRoomView.addChatMessage(payload.winner, `خمّن الإجابة الصحيحة: ${payload.answer}`, true);
                 
                 if (typeof confetti !== 'undefined') {

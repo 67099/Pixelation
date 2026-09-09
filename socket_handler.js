@@ -102,7 +102,7 @@ module.exports = (io) => {
             io.to(roomId).emit('updateGameState', getCleanGameState());
 
             const instructions = `كيف ألعب؟: ستعرض صورة مبكسلة، خمنها! النقاط تعتمد على سرعتك في تخمين الصوره البداية 160 نقطة.
-            سيقل التغبيش تلقائيا مع الوقت اضغط زر التلميح لتسريع فك التغبيش عند الحاجة !
+            راقب شريط وضوح الصورة، يقل التغبيش تلقائيا مع الوقت!
  كل ما قل التغبيش قلت النقاط الكتسبة!`;
 
             socket.emit('guessMessage', {
@@ -121,14 +121,6 @@ module.exports = (io) => {
             }
         });
 
-   
-        socket.on('requestHint', (roomId) => {
-            if (currentGameState.currentPixelLevel > 2) {
-                currentGameState.currentPixelLevel = Math.max(2, currentGameState.currentPixelLevel - 3); 
-                io.to(roomId).emit('updatePixelLevel', currentGameState.currentPixelLevel);
-            }
-        });
-        
         socket.on('submitGuess', async ({ guessText }) => {
             const normalizedGuess = guessText.toUpperCase().trim();
             const roomId = Array.from(socket.rooms)[1]; 

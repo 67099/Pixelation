@@ -178,6 +178,18 @@ main {
     background: #ff5f85;
 }
 
+.pixel-btn.pixel-btn-ghost {
+    background: transparent;
+    color: var(--ink-dim);
+    border: 1px solid var(--bg-panel-raised);
+    margin-top: 0.75rem;
+}
+
+.pixel-btn.pixel-btn-ghost:hover {
+    color: var(--ink);
+    border-color: var(--neon-cyan);
+}
+
 #toggle-auth-mode {
     display: block;
     text-align: center;
@@ -247,14 +259,33 @@ main {
     border-radius: 4px;
 }
 
-#hint-button {
+#pixel-progress {
     margin: 1.25rem auto 0;
     max-width: 420px;
-    background: var(--neon-gold);
+    text-align: center;
 }
 
-#hint-button:hover {
-    background: #fff59c;
+#pixel-progress-track {
+    width: 100%;
+    height: 10px;
+    background: var(--bg-panel-raised);
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+#pixel-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--neon-cyan);
+    transition: width 0.4s ease;
+}
+
+#pixel-progress-label {
+    display: block;
+    margin-top: 0.5rem;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 0.9rem;
+    color: var(--ink-dim);
 }
 
 #scoreboard-area {
